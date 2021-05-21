@@ -47,9 +47,13 @@ const Breakout = () => {
             };
         });
         if(!count) console.log(tempBricks);
-
         
-        // Brick-nii door
+        // Taaz
+        if(tempBall.top <= 0){
+            return setDirection('down');
+        };
+        
+        // Brick's bottom
         const tempBrick1 = tempBricks.findIndex(item => {
             if( item.level && tempBall.top <= item.top + item.height
                 && (tempBall.left >= item.left || tempBall.left + tempBall.width / 2 >= item.left) 
@@ -68,11 +72,63 @@ const Breakout = () => {
             });
             return setDirection('down');
         };
-
-        // Taaz
-        if(!tempBall.top){
-            return setDirection('down');
+        // Brick's top
+        const tempBrick2 = tempBricks.findIndex(item => {
+            if( item.level && tempBall.top + tempBall.height <= item.top
+                && (tempBall.left >= item.left || tempBall.left + tempBall.width / 2 >= item.left) 
+                && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.5 <= item.left + item.width) 
+            ) return true;
+            return false;
+        });
+        if(tempBrick2 !== -1){
+            console.log('Brick deer buuw');
+            console.log(tempBrick2);
+            console.log(direction);
+            setBricks(old => {
+                const update = old.slice();
+                update[tempBrick2] --;
+                return update;
+            });
+            return setDirection('up');
         };
+        // Brick's left
+        const tempBrick3 = tempBricks.findIndex(item => {
+            if( item.level && tempBall.left <= item.left + item.width
+                && (tempBall.top <= item.top && tempBall.top + tempBall.height <= item.top + item.height)
+            ) return true;
+            return false;
+        });
+        if(tempBrick3 !== -1){
+            console.log('Brick zuun tald buuw');
+            console.log(tempBrick3);
+            console.log(direction);
+            setBricks(old => {
+                const update = old.slice();
+                update[tempBrick3] --;
+                return update;
+            });
+            return setAnger(old => 180 - old);
+        };
+        // Brick's right
+        const tempBrick4 = tempBricks.findIndex(item => {
+            if( item.level && tempBall.left + tempBall.width <= item.left
+                && (tempBall.top <= item.top && tempBall.top + tempBall.height <= item.top + item.height)
+            ) return true;
+            return false;
+        });
+        if(tempBrick4 !== -1){
+            console.log('Brick zuun tald buuw');
+            console.log(tempBrick4);
+            console.log(direction);
+            setBricks(old => {
+                const update = old.slice();
+                update[tempBrick4] --;
+                return update;
+            });
+            return setAnger(old => 180 - old);
+        };
+
+        
         // Hawtangiin hajuud
         if((tempBall.top > tempParent.height - tempBall.height - tempBoard.height - 4)
             && (tempBall.left + tempBall.width === tempBoard.left || tempBall.left === tempBoard.left + tempBoard.width)
@@ -81,14 +137,14 @@ const Breakout = () => {
             return setAnger(old => 180 - old);
         };
         // Hawtan deer
-        if((tempBall.top === tempParent.height - tempBall.height - tempBoard.height - 4)
+        if((tempBall.top + tempBall.height >= tempBoard.top)
             && (tempBall.left > tempBoard.left || tempBall.left + tempBall.width > tempBoard.left)
             && (tempBall.left < tempBoard.left + tempBoard.width)
         ){
             const temp = Math.abs(tempBall.left - tempBoard.left);
-            console.log('HAWTAN dr buuw');
-            console.log(temp);
-            console.log(tempBoard.width / 2);
+            // console.log('HAWTAN dr buuw');
+            // console.log(temp);
+            // console.log(tempBoard.width / 2);
             if(temp < tempBoard.width / 2){
                 setAnger(old => {
                     let update = old;
@@ -115,7 +171,7 @@ const Breakout = () => {
             return setDirection('up');
         };
         // Uheh
-        if(tempBall.top > tempParent.height - tempBall.height / 2 - tempBoard.height){
+        if(tempBall.top + 3 > tempParent.height - tempBall.height / 2 - tempBoard.height){
             if(!lifes.length) return setIsOver(true);
             return setLifes(old => {
                 const update = old.slice();
@@ -211,7 +267,7 @@ const Breakout = () => {
                 document.removeEventListener('mousemove', moveBoard );
             };
         };
-    }, [isOver, cursor, board]);
+    });
     useEffect(() => {  
         if(!isOver && !isLoading){
             const interval = setInterval(moveBall, 10);
@@ -239,7 +295,7 @@ const Breakout = () => {
                 </div>
                 <div ref={ ballRef } className='absolute rounded-full bg-red-500' style={{ width: '5%', height: '5%', top: `calc(${ ball.top }% - 5%)`, left: `calc(${ ball.left }% - 5%)` }}></div>
                 <div className='absolute bottom-0 w-1/4 h-5' style={{ backgroundColor: '#2c8bd5', left: `${ board }px` }}></div>
-                { isOver && <button onClick={ restart } className='absolute top-2 z-2 px-4 py-2 border-2 border-white focus:outline-none' style={{ backgroundColor: '#263445' }}>Game Over!</button> }
+                { isOver && <button onClick={ restart } className='absolute top-2 left-60 z-2 px-4 py-2 border-2 border-white focus:outline-none' style={{ backgroundColor: '#263445' }}>Game Over!</button> }
             </div>
         </div>
     );
