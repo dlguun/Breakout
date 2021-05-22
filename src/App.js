@@ -59,7 +59,7 @@ const Breakout = () => {
         const tempBrick1 = tempBricks.findIndex(item => {
             return ( item.level && tempBall.top <= item.top + item.height
                 && (tempBall.left >= item.left || tempBall.left + tempBall.width / 2 >= item.left) 
-                && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.5 <= item.left + item.width)
+                && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.4 <= item.left + item.width)
             ); 
         });
         if(tempBrick1 !== -1){
@@ -76,9 +76,9 @@ const Breakout = () => {
         };
         // Brick's top
         const tempBrick2 = tempBricks.findIndex(item => {
-            return ( item.level && tempBall.top + tempBall.height >= item.top
+            return ( item.level && tempBall.top + tempBall.height <= item.top
                 && (tempBall.left >= item.left || tempBall.left + tempBall.width / 2 >= item.left) 
-                && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.5 <= item.left + item.width) 
+                && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.4 <= item.left + item.width) 
             );
         });
         if(tempBrick2 !== -1){
@@ -94,9 +94,10 @@ const Breakout = () => {
             return setDirection('up');
         };
         // Brick's left
+        // Urgeljlel bii
         const tempBrick3 = tempBricks.findIndex(item => {
             return ( item.level && tempBall.left <= item.left + item.width
-                && (tempBall.top - tempBall.height * 0.5 <= item.top && tempBall.top + tempBall.height * 0.5 <= item.top + item.height)
+                && (tempBall.top + tempBall.height * 0.5 <= item.top + item.height && tempBall.top - tempBall.height * 0.5 >= item.top)
             );
         });
         if(tempBrick3 !== -1){
@@ -114,11 +115,11 @@ const Breakout = () => {
         // Brick's right
         const tempBrick4 = tempBricks.findIndex(item => {
             return ( item.level && tempBall.left + tempBall.width <= item.left
-                && (tempBall.top - tempBall.height * 0.5 <= item.top && tempBall.top + tempBall.height * 0.5 <= item.top + item.height)
+                && (tempBall.top + tempBall.height * 0.5 <= item.top + item.height && tempBall.top - tempBall.height * 0.5 >= item.top)
             );
         });
         if(tempBrick4 !== -1){
-            console.log('Brick zuun tald buuw');
+            console.log('Brick baruun tald buuw');
             console.log(tempBrick4);
             console.log(direction);
             setBricks(old => {
