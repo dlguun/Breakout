@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 const Breakout = () => {
     const [ score, setScore ] = useState(0);
     const [ isOver, setIsOver ] = useState(false);
-    const [ ball, setBall ] = useState({ top: 546, left: 290 });
+    const [ ball, setBall ] = useState({ top: 96.5, left: 54 });
     const ballRef = useRef(null);
     const [ board, setBoard ] = useState(230);
     const [ anger, setAnger ] = useState(90);
@@ -14,11 +14,13 @@ const Breakout = () => {
     const [ count, setCount ] = useState(0);
     
     const logic = () => {
+        if(score >= 120) return setIsOver(true);
+
         if(!count){
             setCount(1);
-            console.log(ballRef);
-            console.log('BRICKS');
-            console.log(ballRef.current.previousSibling.childNodes);
+            // console.log(ballRef);
+            // console.log('BRICKS');
+            // console.log(ballRef.current.previousSibling.childNodes);
         };
         const tempBall = {
             left: ballRef.current.offsetLeft,
@@ -36,16 +38,16 @@ const Breakout = () => {
             width: ballRef.current.offsetParent.offsetWidth,
             height: ballRef.current.offsetParent.offsetHeight,
         };
-        const tempBricks = Array.from(ballRef.current.previousSibling.childNodes).map((item, index) => {
+        const tempBricks = Array.from(ballRef.current.offsetParent.childNodes[1].childNodes).map((item) => {
             return {
-                level: item.dataset.level,
+                level: parseInt(item.dataset.level),
                 width: item.offsetWidth,
                 height: item.offsetHeight,
-                top: item.offsetTop,
+                top: item.offsetTop + ballRef.current.offsetParent.childNodes[1].offsetTop,
                 left: item.offsetLeft,
             };
-        }).filter(item => item.level);
-        // if(!count) console.log(tempBricks);
+        });
+        // console.log(tempBricks);
         
         
         // Taaz
@@ -55,7 +57,7 @@ const Breakout = () => {
         
         // Brick's bottom
         const tempBrick1 = tempBricks.findIndex(item => {
-            return ( tempBall.top <= item.top + item.height
+            return ( item.level && tempBall.top <= item.top + item.height
                 && (tempBall.left >= item.left || tempBall.left + tempBall.width / 2 >= item.left) 
                 && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.5 <= item.left + item.width)
             ); 
@@ -74,7 +76,7 @@ const Breakout = () => {
         };
         // Brick's top
         const tempBrick2 = tempBricks.findIndex(item => {
-            return ( item.level && tempBall.top + tempBall.height <= item.top
+            return ( item.level && tempBall.top + tempBall.height >= item.top
                 && (tempBall.left >= item.left || tempBall.left + tempBall.width / 2 >= item.left) 
                 && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.5 <= item.left + item.width) 
             );
@@ -94,7 +96,7 @@ const Breakout = () => {
         // Brick's left
         const tempBrick3 = tempBricks.findIndex(item => {
             return ( item.level && tempBall.left <= item.left + item.width
-                && (tempBall.top <= item.top && tempBall.top + tempBall.height <= item.top + item.height)
+                && (tempBall.top - tempBall.height * 0.5 <= item.top && tempBall.top + tempBall.height * 0.5 <= item.top + item.height)
             );
         });
         if(tempBrick3 !== -1){
@@ -112,7 +114,7 @@ const Breakout = () => {
         // Brick's right
         const tempBrick4 = tempBricks.findIndex(item => {
             return ( item.level && tempBall.left + tempBall.width <= item.left
-                && (tempBall.top <= item.top && tempBall.top + tempBall.height <= item.top + item.height)
+                && (tempBall.top - tempBall.height * 0.5 <= item.top && tempBall.top + tempBall.height * 0.5 <= item.top + item.height)
             );
         });
         if(tempBrick4 !== -1){
