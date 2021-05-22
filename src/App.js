@@ -55,11 +55,10 @@ const Breakout = () => {
         
         // Brick's bottom
         const tempBrick1 = tempBricks.findIndex(item => {
-            if( tempBall.top <= item.top + item.height
+            return ( tempBall.top <= item.top + item.height
                 && (tempBall.left >= item.left || tempBall.left + tempBall.width / 2 >= item.left) 
-                && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.5 <= item.left + item.width) 
-            ) return true;
-            return false;
+                && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.5 <= item.left + item.width)
+            ); 
         });
         if(tempBrick1 !== -1){
             console.log('Brick door buuw');
@@ -75,11 +74,10 @@ const Breakout = () => {
         };
         // Brick's top
         const tempBrick2 = tempBricks.findIndex(item => {
-            if( item.level && tempBall.top + tempBall.height <= item.top
+            return ( item.level && tempBall.top + tempBall.height <= item.top
                 && (tempBall.left >= item.left || tempBall.left + tempBall.width / 2 >= item.left) 
                 && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.5 <= item.left + item.width) 
-            ) return true;
-            return false;
+            );
         });
         if(tempBrick2 !== -1){
             console.log('Brick deer buuw');
@@ -95,10 +93,9 @@ const Breakout = () => {
         };
         // Brick's left
         const tempBrick3 = tempBricks.findIndex(item => {
-            if( item.level && tempBall.left <= item.left + item.width
+            return ( item.level && tempBall.left <= item.left + item.width
                 && (tempBall.top <= item.top && tempBall.top + tempBall.height <= item.top + item.height)
-            ) return true;
-            return false;
+            );
         });
         if(tempBrick3 !== -1){
             console.log('Brick zuun tald buuw');
@@ -114,10 +111,9 @@ const Breakout = () => {
         };
         // Brick's right
         const tempBrick4 = tempBricks.findIndex(item => {
-            if( item.level && tempBall.left + tempBall.width <= item.left
+            return ( item.level && tempBall.left + tempBall.width <= item.left
                 && (tempBall.top <= item.top && tempBall.top + tempBall.height <= item.top + item.height)
-            ) return true;
-            return false;
+            );
         });
         if(tempBrick4 !== -1){
             console.log('Brick zuun tald buuw');
