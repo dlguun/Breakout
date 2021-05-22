@@ -12,13 +12,12 @@ const Breakout = () => {
     const [ lifes, setLifes ] = useState(Array(0).fill(1));
     const [ bricks, setBricks ] = useState(Array(40).fill(3));
     const [ count, setCount ] = useState(0);
-    const [ isLoading, setIsLoading ] = useState(false);
     
     const logic = () => {
         if(!count){
             setCount(1);
-            // console.log(ballRef);
-            // console.log('BRICKS');
+            console.log(ballRef);
+            console.log('BRICKS');
             console.log(ballRef.current.previousSibling.childNodes);
         };
         const tempBall = {
@@ -45,8 +44,9 @@ const Breakout = () => {
                 top: item.offsetTop,
                 left: item.offsetLeft,
             };
-        });
-        if(!count) console.log(tempBricks);
+        }).filter(item => item.level);
+        // if(!count) console.log(tempBricks);
+        
         
         // Taaz
         if(tempBall.top <= 0){
@@ -55,7 +55,7 @@ const Breakout = () => {
         
         // Brick's bottom
         const tempBrick1 = tempBricks.findIndex(item => {
-            if( item.level && tempBall.top <= item.top + item.height
+            if( tempBall.top <= item.top + item.height
                 && (tempBall.left >= item.left || tempBall.left + tempBall.width / 2 >= item.left) 
                 && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.5 <= item.left + item.width) 
             ) return true;
@@ -70,6 +70,7 @@ const Breakout = () => {
                 update[tempBrick1] --;
                 return update;
             });
+            setScore(old => old + 1);
             return setDirection('down');
         };
         // Brick's top
@@ -89,6 +90,7 @@ const Breakout = () => {
                 update[tempBrick2] --;
                 return update;
             });
+            setScore(old => old + 1);
             return setDirection('up');
         };
         // Brick's left
@@ -107,6 +109,7 @@ const Breakout = () => {
                 update[tempBrick3] --;
                 return update;
             });
+            setScore(old => old + 1);
             return setAnger(old => 180 - old);
         };
         // Brick's right
@@ -125,6 +128,7 @@ const Breakout = () => {
                 update[tempBrick4] --;
                 return update;
             });
+            setScore(old => old + 1);
             return setAnger(old => 180 - old);
         };
 
@@ -184,8 +188,8 @@ const Breakout = () => {
             return setAnger(old => 180 - old);
         };
     };
+
     const moveBall = () => {
-        setIsLoading(true);
         if(direction === 'up'){
             if(anger < 90) {
                 setBall(old => {
@@ -232,22 +236,15 @@ const Breakout = () => {
             };
         };
         logic();
-        setIsLoading(false);
     };
-    const moveBoard = (e) => {
-        setCursor(e.screenX);
-        if(cursor) {
-            const temp = e.screenX - cursor;
-            if(board + temp < 0 || board + temp > 447) return;
-            setBoard(board + temp);
-        };
-    };
+
     const tryAgain = () => {
         setBall({ top: 96.5, left: 54 });
         setBoard(230);
         setAnger(90);
         setDirection('up');
     };
+
     const restart = () => {
         setScore(0);
         setIsOver(false);
@@ -259,7 +256,15 @@ const Breakout = () => {
         tryAgain();
     }, [lifes]);
 
-    useEffect(() => {  
+    useEffect(() => {
+        const moveBoard = (e) => {
+            setCursor(e.screenX);
+            if(cursor) {
+                const temp = e.screenX - cursor;
+                if(board + temp < 0 || board + temp > 447) return;
+                setBoard(board + temp);
+            };
+        };  
         if(!isOver){
             document.addEventListener('mousemove', moveBoard );
 
@@ -267,13 +272,15 @@ const Breakout = () => {
                 document.removeEventListener('mousemove', moveBoard );
             };
         };
-    });
-    useEffect(() => {  
-        if(!isOver && !isLoading){
-            const interval = setInterval(moveBall, 10);
+    }, [isOver, board, cursor]);
 
+    useEffect(() => {  
+        if(!isOver){
+            const interval = setInterval(moveBall, 10);
+            // const timeout = setTimeout(moveBall, 10);
             return () => {
                 clearInterval(interval);
+                // clearTimeout(timeout);
             };
         };
     });
