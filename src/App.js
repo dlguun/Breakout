@@ -54,12 +54,13 @@ const Breakout = () => {
         if(tempBall.top <= 0){
             return setDirection('down');
         };
-        
+        // Aldaatai
         // Brick's bottom
+        
         const tempBrick1 = tempBricks.findIndex(item => {
-            return ( item.level && tempBall.top <= item.top + item.height
-                && (tempBall.left >= item.left || tempBall.left + tempBall.width / 2 >= item.left) 
-                && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.4 <= item.left + item.width)
+            return ( item.level && tempBall.top <= item.top + item.height && tempBall.top >= item.top + item.height - 4
+                && (tempBall.left >= item.left || tempBall.left + tempBall.width * 0.5 >= item.left) 
+                && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.5 <= item.left + item.width)
             ); 
         });
         if(tempBrick1 !== -1){
@@ -76,9 +77,9 @@ const Breakout = () => {
         };
         // Brick's top
         const tempBrick2 = tempBricks.findIndex(item => {
-            return ( item.level && tempBall.top + tempBall.height <= item.top
-                && (tempBall.left >= item.left || tempBall.left + tempBall.width / 2 >= item.left) 
-                && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.4 <= item.left + item.width) 
+            return ( item.level && tempBall.top + tempBall.height >= item.top && tempBall.top + tempBall.height <= item.top + 4
+                && (tempBall.left >= item.left || tempBall.left + tempBall.width * 0.5 >= item.left) 
+                && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.5 <= item.left + item.width) 
             );
         });
         if(tempBrick2 !== -1){
@@ -238,7 +239,7 @@ const Breakout = () => {
     };
 
     const tryAgain = () => {
-        setBall({ top: 96.5, left: 54 });
+        setBall({ top: 10.5, left: 54 });
         setBoard(230);
         setAnger(90);
         setDirection('up');
@@ -282,7 +283,19 @@ const Breakout = () => {
                 // clearTimeout(timeout);
             };
         };
-    });
+    }, [isOver, moveBall]);
+
+    useEffect(() => {
+        const esc = (e) => {
+            if(e.key === 'Escape') setIsOver(!isOver);
+        };
+
+        document.addEventListener('keyup', esc);
+
+        return () => {
+            document.removeEventListener('keyup', esc);
+        };
+    }, [isOver, direction, anger, ball, score, lifes, bricks, count]);
 
     return (
         <div className='w-screen h-screen flex items-center text-white' style={{ backgroundColor: '#263445', cursor: `${ !isOver ? 'none' : 'default' }` }}>
