@@ -55,11 +55,46 @@ const Breakout = () => {
             return setDirection('down');
         };
 
+        // Brick's left
+        const tempBrick3 = tempBricks.findIndex(item => {
+            return (item.level && tempBall.left <= item.left + item.width && tempBall.left >= item.left + item.width - 2
+             && (tempBall.top - tempBall.height * 0.5 >= item.top && tempBall.top + tempBall.height * 0.5 <= item.top + item.height) 
+            );
+        });
+        if(tempBrick3 !== -1){
+            console.log('Brick zuun tald buuw');
+            console.log(tempBrick3);
+            console.log(direction);
+            setBricks(old => {
+                const update = old.slice();
+                update[tempBrick3] --;
+                return update;
+            });
+            setScore(old => old + 1);
+            return setAnger(old => 180 - old);
+        };
+        // Brick's right
+        const tempBrick4 = tempBricks.findIndex(item => {
+            return ( item.level && tempBall.left + tempBall.width >= item.left && tempBall.left + tempBall.width <= item.left + 2
+                && (tempBall.top - tempBall.height * 0.5 >= item.top && tempBall.top + tempBall.height * 0.5 <= item.top + item.height)
+            );
+        });
+        if(tempBrick4 !== -1){
+            console.log('Brick baruun tald buuw');
+            console.log(tempBrick4);
+            console.log(direction);
+            setBricks(old => {
+                const update = old.slice();
+                update[tempBrick4] --;
+                return update;
+            });
+            setScore(old => old + 1);
+            return setAnger(old => 180 - old);
+        };
         // Brick's bottom
         const tempBrick1 = tempBricks.findIndex(item => {
             return ( item.level && tempBall.top <= item.top + item.height && tempBall.top >= item.top + item.height - 2
-                && (tempBall.left >= item.left || tempBall.left + tempBall.width * 0.5 >= item.left) 
-                && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.5 <= item.left + item.width)
+                && (tempBall.left + tempBall.width * 0.5 >= item.left && tempBall.left + tempBall.width * 0.5 <= item.left + item.width)
             ); 
         });
         if(tempBrick1 !== -1){
@@ -77,8 +112,7 @@ const Breakout = () => {
         // Brick's top
         const tempBrick2 = tempBricks.findIndex(item => {
             return ( item.level && tempBall.top + tempBall.height >= item.top && tempBall.top + tempBall.height <= item.top + 2
-                && (tempBall.left >= item.left || tempBall.left + tempBall.width * 0.5 >= item.left) 
-                && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.5 <= item.left + item.width) 
+                && (tempBall.left + tempBall.width * 0.5 >= item.left && tempBall.left + tempBall.width * 0.5 <= item.left + item.width) 
             );
         });
         if(tempBrick2 !== -1){
@@ -93,43 +127,6 @@ const Breakout = () => {
             setScore(old => old + 1);
             return setDirection('up');
         };
-        // Brick's left
-        const tempBrick3 = tempBricks.findIndex(item => {
-            return ( item.level && tempBall.left <= item.left + item.width
-                && (tempBall.top + tempBall.height * 0.5 <= item.top + item.height && tempBall.top - tempBall.height * 0.5 >= item.top)
-            );
-        });
-        if(tempBrick3 !== -1){
-            console.log('Brick zuun tald buuw');
-            console.log(tempBrick3);
-            console.log(direction);
-            setBricks(old => {
-                const update = old.slice();
-                update[tempBrick3] --;
-                return update;
-            });
-            setScore(old => old + 1);
-            return setAnger(old => 180 - old);
-        };
-        // Brick's right
-        const tempBrick4 = tempBricks.findIndex(item => {
-            return ( item.level && tempBall.left + tempBall.width <= item.left
-                && (tempBall.top + tempBall.height * 0.5 <= item.top + item.height && tempBall.top - tempBall.height * 0.5 >= item.top)
-            );
-        });
-        if(tempBrick4 !== -1){
-            console.log('Brick baruun tald buuw');
-            console.log(tempBrick4);
-            console.log(direction);
-            setBricks(old => {
-                const update = old.slice();
-                update[tempBrick4] --;
-                return update;
-            });
-            setScore(old => old + 1);
-            return setAnger(old => 180 - old);
-        };
-
         
         // Hawtangiin hajuud
         if((tempBall.top > tempParent.height - tempBall.height - tempBoard.height - 4)
@@ -238,7 +235,7 @@ const Breakout = () => {
     };
 
     const tryAgain = () => {
-        setBall({ top: 76, left: 320 });
+        setBall({ top: 76, left: 313 });
         setBoard(230);
         setAnger(90);
         setDirection('up');
