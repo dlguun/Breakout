@@ -336,6 +336,7 @@ const Breakout = ({ setIsGame, info }) => {
             try {
                 if(id === null){
                     const response = await database.collection('scores').add({ user: info.user, score: maxScore });
+                    console.log(response.id);
                     setId(response.id);
                 } else {
                     await database.collection('scores').doc(id).set({ user: info.user, score: maxScore });
@@ -344,12 +345,8 @@ const Breakout = ({ setIsGame, info }) => {
                 console.error(err.message);
             };
         };
-        if(isOver){
-            setData();
-        };
-
-        return setData;
-    }, [info, maxScore, isOver, id]);
+        if(isOver && !lifes.length) setData();
+    }, [info, maxScore, isOver, id, lifes]);
 
     return (
             <>
