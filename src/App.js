@@ -1,7 +1,46 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { database } from './firebase';
 
-const Breakout = () => {
+const Settings = ({ setIsGame, info, setInfo }) => {
+    const inputRef = useRef(null);
+    const [thisCols, setThisCols] = useState(info.cols);
+    const [thisRows, setThisRows] = useState(info.rows);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if(!inputRef.current.value.trim()) return inputRef.current.focus();
+        let temp = {
+            user: inputRef.current.value.trim(),
+            cols: thisCols,
+            rows: thisRows,
+        };
+        setInfo(temp);
+        setIsGame(true);
+    };
+
+    return(
+        <>
+            <form onSubmit={ handleSubmit } className='p-8 grid grid-cols-4 gap-4'>
+                <label className='flex justify-end'>Name</label>
+                <input ref={ inputRef } type='text' className='col-span-2 px-2 text-black' defaultValue={ info.user } placeholder='Please check your name'/>
+                <label className='col-start-1 flex justify-end'>Cols</label>
+                <input value={ thisCols } onChange={ (e) => setThisCols(e.target.value) } type='range' className='col-span-2 focus:outline-none' min={ 5 } max={ 10 }/>
+                <span>{ thisCols }</span>
+                <label className='flex justify-end'>Rows</label>
+                <input value={ thisRows } onChange={ (e) => setThisRows(e.target.value) }  type='range' className='col-span-2 focus:outline-none' min={ 5 } max={ 10 }/>
+                <span>{ thisRows }</span>
+                <button type='submit' className='col-start-2 border rounded'>Submit</button>
+            </form>
+        </>
+    );
+};
+
+const Breakout = ({ setIsGame, info }) => {
     const [ score, setScore ] = useState(0);
+    const maxScore = useMemo((old) => {
+        if(score > maxScore) return score;
+        return old;
+    }, [score]);
     const [ isOver, setIsOver ] = useState(false);
     const [ ball, setBall ] = useState({ top: 576, left: 320 });
     const ballRef = useRef(null);
@@ -10,11 +49,11 @@ const Breakout = () => {
     const [ direction, setDirection ] = useState('up');
     const [ cursor, setCursor ] = useState(null);
     const [ lifes, setLifes ] = useState(Array(4).fill(1));
-    const [ bricks, setBricks ] = useState(Array(40).fill(3));
+    const [ bricks, setBricks ] = useState(Array(info.cols * info.rows).fill(3));
     const [ count, setCount ] = useState(0);
 
     const logic = () => {
-        if(score >= 120) return setIsOver(true);
+        if(score >= bricks.length * 3) return setIsOver(true);
 
         if(!count){
             setCount(1);
@@ -293,27 +332,57 @@ const Breakout = () => {
         };
     }, [isOver]);
 
+    useEffect(() => {
+        return async() => {
+            try {
+                await database.collection('scores').add({ user: info.user, score: maxScore });
+            } catch(err) {
+                console.error(err.message);
+                return;
+            };
+        };
+    }, [info, maxScore]);
+
     return (
-        <div className='w-screen h-screen flex items-center text-white' style={{ backgroundColor: '#263445', cursor: `${ !isOver ? 'none' : 'default' }` }}>
-            <div className='relative mx-auto my-auto w-full h-full flex flex-col border-2 border-white' style={{ maxWidth: '600px', maxHeight: '600px'}}>
+            <>
                 <header className='px-2 py-4 w-full flex'>
-                    <span className='flex-1'>Score: { score }</span>
+                    <span>Score: { score }</span>
+                    <span onClick={ () => { setIsGame(false) } } className='flex-1 ml-4 cursor-pointer'>⚙️</span>
                     <div className='flex gap-2'>{ lifes.map((item, index) => <div key={ index } className='w-6 h-3 bg-red-500 rounded-sm'></div>) }</div>
                 </header>
-                <div className='absolute top-40 left-0 w-full grid grid-cols-8 grid-rows-5'>
+                <div className={`absolute top-40 left-0 w-full grid grid-cols-${ info.cols }`}>
                     { bricks.map((item, index) => {
-                        if(item === 3) return <div key={ index } data-level={ item } className='w-1/8 h-6 border border-white' style={{ backgroundColor: '#48ac8b' }}></div>
-                        if(item === 2) return <div key={ index } data-level={ item } className='w-1/8 h-6 border border-white' style={{ backgroundColor: '#276f6a' }}></div>
-                        if(item === 1) return <div key={ index } data-level={ item } className='w-1/8 h-6 border border-white' style={{ backgroundColor: '#275b5f' }}></div>
-                        return <div key={ index } data-level={ item } className='w-1/8 h-6 border border-transparent'></div>
+                        if(item === 3) return <div key={ index } data-level={ item } className='h-6 border border-white' style={{ backgroundColor: '#48ac8b' }}></div>
+                        if(item === 2) return <div key={ index } data-level={ item } className='h-6 border border-white' style={{ backgroundColor: '#276f6a' }}></div>
+                        if(item === 1) return <div key={ index } data-level={ item } className='h-6 border border-white' style={{ backgroundColor: '#275b5f' }}></div>
+                        return <div key={ index } data-level={ item } className='h-6 border border-transparent'></div>
                     }) }
                 </div>
                 <div ref={ ballRef } className='absolute rounded-full bg-red-500' style={{ width: '5%', height: '5%', top: `calc(${ ball.top }px - 5%)`, left: `calc(${ ball.left }px - 5%)` }}></div>
                 <div className='absolute bottom-0 w-1/4 h-5' style={{ backgroundColor: '#2c8bd5', left: `${ board }px` }}></div>
                 { isOver && <button onClick={ restart } className='absolute top-2 z-2 px-4 py-2 border-2 border-white focus:outline-none' style={{ backgroundColor: '#263445', left:'calc(50% - 121px / 2)' }}>Game Over!</button> }
+            </>
+    );
+};
+
+const Game = () => {
+    const [isGame, setIsGame] = useState(false);
+    const [info, setInfo] = useState({
+        user: null,
+        cols: 8,
+        rows: 5,
+    });
+
+    return(
+        <div className='w-screen h-screen flex items-center text-white' style={{ backgroundColor: '#263445' }}>
+            <div className='relative mx-auto my-auto w-full h-full flex flex-col border-2 border-white' style={{ maxWidth: '600px', maxHeight: '600px'}}>
+                { isGame 
+                    ? <Breakout setIsGame={ setIsGame} info={ info } /> 
+                    : <Settings setIsGame={ setIsGame} info={ info } setInfo={ setInfo } />
+                }    
             </div>
         </div>
     );
 };
 
-export default Breakout;
+export default Game;
