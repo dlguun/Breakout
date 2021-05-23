@@ -58,13 +58,13 @@ const Breakout = () => {
         // Brick's left
         const tempBrick3 = tempBricks.findIndex(item => {
             return (item.level && tempBall.left <= item.left + item.width && tempBall.left >= item.left + item.width - 2
-             && (tempBall.top - tempBall.height * 0.5 >= item.top && tempBall.top + tempBall.height * 0.5 <= item.top + item.height) 
+             && (tempBall.top + tempBall.height * 0.5 >= item.top && tempBall.top + tempBall.height * 0.5 <= item.top + item.height) 
             );
         });
         if(tempBrick3 !== -1){
-            console.log('Brick zuun tald buuw');
-            console.log(tempBrick3);
-            console.log(direction);
+            // console.log('Brick zuun tald buuw');
+            // console.log(tempBrick3);
+            // console.log(direction);
             setBricks(old => {
                 const update = old.slice();
                 update[tempBrick3] --;
@@ -76,13 +76,13 @@ const Breakout = () => {
         // Brick's right
         const tempBrick4 = tempBricks.findIndex(item => {
             return ( item.level && tempBall.left + tempBall.width >= item.left && tempBall.left + tempBall.width <= item.left + 2
-                && (tempBall.top - tempBall.height * 0.5 >= item.top && tempBall.top + tempBall.height * 0.5 <= item.top + item.height)
+                && (tempBall.top + tempBall.height * 0.5 >= item.top && tempBall.top + tempBall.height * 0.5 <= item.top + item.height)
             );
         });
         if(tempBrick4 !== -1){
-            console.log('Brick baruun tald buuw');
-            console.log(tempBrick4);
-            console.log(direction);
+            // console.log('Brick baruun tald buuw');
+            // console.log(tempBrick4);
+            // console.log(direction);
             setBricks(old => {
                 const update = old.slice();
                 update[tempBrick4] --;
@@ -98,9 +98,11 @@ const Breakout = () => {
             ); 
         });
         if(tempBrick1 !== -1){
-            console.log('Brick door buuw');
-            console.log(tempBrick1);
-            console.log(direction);
+            // console.log('Brick door buuw');
+            // console.log(tempBrick1);
+            // console.log(direction);
+            // console.log('tempBall' + tempBall);
+            // console.log('brick' + tempBricks[tempBrick1]);
             setBricks(old => {
                 const update = old.slice();
                 update[tempBrick1] --;
@@ -116,9 +118,9 @@ const Breakout = () => {
             );
         });
         if(tempBrick2 !== -1){
-            console.log('Brick deer buuw');
-            console.log(tempBrick2);
-            console.log(direction);
+            // console.log('Brick deer buuw');
+            // console.log(tempBrick2);
+            // console.log(direction);
             setBricks(old => {
                 const update = old.slice();
                 update[tempBrick2] --;
@@ -235,7 +237,7 @@ const Breakout = () => {
     };
 
     const tryAgain = () => {
-        setBall({ top: 76, left: 313 });
+        setBall({ top: 576, left: 313 });
         setBoard(230);
         setAnger(90);
         setDirection('up');
