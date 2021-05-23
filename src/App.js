@@ -3,16 +3,16 @@ import { useEffect, useRef, useState } from "react";
 const Breakout = () => {
     const [ score, setScore ] = useState(0);
     const [ isOver, setIsOver ] = useState(false);
-    const [ ball, setBall ] = useState({ top: 96.5, left: 54 });
+    const [ ball, setBall ] = useState({ top: 576, left: 320 });
     const ballRef = useRef(null);
     const [ board, setBoard ] = useState(230);
     const [ anger, setAnger ] = useState(90);
     const [ direction, setDirection ] = useState('up');
     const [ cursor, setCursor ] = useState(null);
-    const [ lifes, setLifes ] = useState(Array(0).fill(1));
+    const [ lifes, setLifes ] = useState(Array(4).fill(1));
     const [ bricks, setBricks ] = useState(Array(40).fill(3));
     const [ count, setCount ] = useState(0);
-    
+
     const logic = () => {
         if(score >= 120) return setIsOver(true);
 
@@ -54,11 +54,10 @@ const Breakout = () => {
         if(tempBall.top <= 0){
             return setDirection('down');
         };
-        // Aldaatai
+
         // Brick's bottom
-        
         const tempBrick1 = tempBricks.findIndex(item => {
-            return ( item.level && tempBall.top <= item.top + item.height && tempBall.top >= item.top + item.height - 4
+            return ( item.level && tempBall.top <= item.top + item.height && tempBall.top >= item.top + item.height - 2
                 && (tempBall.left >= item.left || tempBall.left + tempBall.width * 0.5 >= item.left) 
                 && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.5 <= item.left + item.width)
             ); 
@@ -77,7 +76,7 @@ const Breakout = () => {
         };
         // Brick's top
         const tempBrick2 = tempBricks.findIndex(item => {
-            return ( item.level && tempBall.top + tempBall.height >= item.top && tempBall.top + tempBall.height <= item.top + 4
+            return ( item.level && tempBall.top + tempBall.height >= item.top && tempBall.top + tempBall.height <= item.top + 2
                 && (tempBall.left >= item.left || tempBall.left + tempBall.width * 0.5 >= item.left) 
                 && (tempBall.left + tempBall.width <= item.left + item.width || tempBall.left + tempBall.width * 1.5 <= item.left + item.width) 
             );
@@ -95,7 +94,6 @@ const Breakout = () => {
             return setDirection('up');
         };
         // Brick's left
-        // Urgeljlel bii
         const tempBrick3 = tempBricks.findIndex(item => {
             return ( item.level && tempBall.left <= item.left + item.width
                 && (tempBall.top + tempBall.height * 0.5 <= item.top + item.height && tempBall.top - tempBall.height * 0.5 >= item.top)
@@ -142,8 +140,9 @@ const Breakout = () => {
         };
         // Hawtan deer
         if((tempBall.top + tempBall.height >= tempBoard.top)
-            && (tempBall.left > tempBoard.left || tempBall.left + tempBall.width > tempBoard.left)
-            && (tempBall.left < tempBoard.left + tempBoard.width)
+            && (tempBall.left > tempBoard.left || tempBall.left + tempBall.width * 0.8 > tempBoard.left)
+            && (tempBall.left + tempBall.width < tempBoard.left + tempBoard.width 
+                || tempBall.left + tempBall.width * 0.2 < tempBoard.left + tempBoard.width)
         ){
             const temp = Math.abs(tempBall.left - tempBoard.left);
             // console.log('HAWTAN dr buuw');
@@ -239,7 +238,7 @@ const Breakout = () => {
     };
 
     const tryAgain = () => {
-        setBall({ top: 10.5, left: 54 });
+        setBall({ top: 76, left: 320 });
         setBoard(230);
         setAnger(90);
         setDirection('up');
@@ -276,14 +275,12 @@ const Breakout = () => {
 
     useEffect(() => {  
         if(!isOver){
-            const interval = setInterval(moveBall, 10);
-            // const timeout = setTimeout(moveBall, 10);
+            const interval = setInterval(moveBall, 1);
             return () => {
                 clearInterval(interval);
-                // clearTimeout(timeout);
             };
         };
-    }, [isOver, moveBall]);
+    }, [isOver, direction, anger, ball, score, lifes, bricks, count]);
 
     useEffect(() => {
         const esc = (e) => {
@@ -295,7 +292,7 @@ const Breakout = () => {
         return () => {
             document.removeEventListener('keyup', esc);
         };
-    }, [isOver, direction, anger, ball, score, lifes, bricks, count]);
+    }, [isOver]);
 
     return (
         <div className='w-screen h-screen flex items-center text-white' style={{ backgroundColor: '#263445', cursor: `${ !isOver ? 'none' : 'default' }` }}>
@@ -312,7 +309,7 @@ const Breakout = () => {
                         return <div key={ index } data-level={ item } className='w-1/8 h-6 border border-transparent'></div>
                     }) }
                 </div>
-                <div ref={ ballRef } className='absolute rounded-full bg-red-500' style={{ width: '5%', height: '5%', top: `calc(${ ball.top }% - 5%)`, left: `calc(${ ball.left }% - 5%)` }}></div>
+                <div ref={ ballRef } className='absolute rounded-full bg-red-500' style={{ width: '5%', height: '5%', top: `calc(${ ball.top }px - 5%)`, left: `calc(${ ball.left }px - 5%)` }}></div>
                 <div className='absolute bottom-0 w-1/4 h-5' style={{ backgroundColor: '#2c8bd5', left: `${ board }px` }}></div>
                 { isOver && <button onClick={ restart } className='absolute top-2 left-60 z-2 px-4 py-2 border-2 border-white focus:outline-none' style={{ backgroundColor: '#263445' }}>Game Over!</button> }
             </div>
